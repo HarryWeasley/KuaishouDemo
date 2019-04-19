@@ -2,35 +2,26 @@ package com.example.kuaishoudemo;
 
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import com.bumptech.glide.Glide;
-
-import java.util.List;
 
 /**
- * Created by Harry on 2019/4/15.
+ * Created by Harry on 2019/4/19.
  * desc:
  */
-public class DetailActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
-
+public class AnimationFrameLayout extends FrameLayout implements GestureDetector.OnGestureListener {
+    private FrameLayout frameLayout;
+    private View parent;
     private GestureDetector mGestureDetector;
-    private float mTouchSlop;
-    LinearLayout parent;
     private float mExitScalingRef; // 触摸退出进度
     private int viewHeight;
-    private FrameLayout frameLayout;
-
+    private FinishListener finishListener;
     TypeEvaluator<Integer> mColorEvaluator = new TypeEvaluator<Integer>() {
         @Override
         public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
@@ -44,36 +35,37 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
             return Color.argb(alpha, red, green, blue);
         }
     };
-    private List<String> datas;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        if (Build.VERSION.SDK_INT >= 23) {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.WHITE);
-        }
-        parent = findViewById(R.id.parent);
-        frameLayout = findViewById(R.id.frame_layout);
-        ImageView imageView = findViewById(R.id.image);
-        String url = getIntent().getStringExtra("url");
-        Glide.with(this).load(url).into(imageView);
-        mGestureDetector = new GestureDetector(this, this);
-        mTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
-
-
+    public AnimationFrameLayout(Context context) {
+        this(context, null);
     }
 
+    public AnimationFrameLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        frameLayout = this;
+        mGestureDetector = new GestureDetector(context, this);
+    }
+
+    public void setFinishListener(FinishListener finishListener) {
+        this.finishListener = finishListener;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        boolean ret = super.dispatchTouchEvent(event);
+        return ret;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mExitScalingRef < 0.5) {
                 //缩小到一定的程度，将其关闭
-                onBackPressed();
+                if (finishListener != null) {
+                    finishListener.finish();
+
+                }
             } else {
                 final float moveX = parent.getTranslationX();
                 final float moveY = parent.getTranslationY();
@@ -90,7 +82,6 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
                         parent.setTranslationY(moveY + (0 - moveY) * p);
                         parent.setScaleX(scaleX + (1 - scaleX) * p);
                         parent.setScaleY(scaleY + (1 - scaleY) * p);
-                        frameLayout.setBackgroundColor(mColorEvaluator.evaluate(p, 0x00000000, 0xFF000000));
                     }
                 });
                 valueAnimator.start();
@@ -99,10 +90,10 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
         return mGestureDetector.onTouchEvent(event);
     }
 
-
     @Override
     public boolean onDown(MotionEvent e) {
-        return false;
+        //必须要返回true，否则onScroll将不会被回调
+        return true;
     }
 
     @Override
@@ -115,10 +106,15 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
         return false;
     }
 
-
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        viewHeight = parent.getHeight();
+        Log.i("ddd333", "dddd333");
+        if (parent == null) {
+            parent = getChildAt(0);
+        }
+        if (viewHeight == 0) {
+            viewHeight = parent.getHeight();
+        }
         float moveX = e2.getX() - e1.getX();
         float moveY = e2.getY() - e1.getY();
 
@@ -149,5 +145,9 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
+    }
+
+    public interface FinishListener {
+        void finish();
     }
 }

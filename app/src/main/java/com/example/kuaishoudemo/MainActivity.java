@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         myAdapter.setOnClickListener(new MyAdapter.OnClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                Intent intent = new Intent(MainActivity.this, DetailActivity2.class);
                 intent.putExtra("url",datas.get(position));
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, v, "sharedView").toBundle());
             }

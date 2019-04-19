@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".DetailActivity"
             android:theme="@style/Share_Style"/>
+        <activity android:name=".DetailActivity2"
+            android:theme="@style/Share_Style"/>
     </application>
 
 </manifest>

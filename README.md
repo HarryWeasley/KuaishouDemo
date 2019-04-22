@@ -5,3 +5,5 @@ KuaishouDemo,Android模仿快手视频详情页退出动画
 
 动画效果：
 
+![](https://github.com/HarryWeasley/KuaishouDemo/blob/master/test.gif)<br>
+

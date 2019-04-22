@@ -63,8 +63,6 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
         Glide.with(this).load(url).into(imageView);
         mGestureDetector = new GestureDetector(this, this);
         mTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
-
-
     }
 
 
@@ -102,7 +100,7 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
 
     @Override
     public boolean onDown(MotionEvent e) {
-        return false;
+        return true;
     }
 
     @Override

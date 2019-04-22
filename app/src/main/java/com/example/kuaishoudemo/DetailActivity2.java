@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 
 /**
  * Created by Harry on 2019/4/15.
- * desc:
+ * desc:更易于集成的实现方式，layout里放入{@link AnimationFrameLayout}，通过LayoutInflater.from(this).inflate方式放入内部的布局
  */
 public class DetailActivity2 extends AppCompatActivity {
 
@@ -27,7 +27,8 @@ public class DetailActivity2 extends AppCompatActivity {
             decorView.setSystemUiVisibility(option);
         }
         AnimationFrameLayout frameLayout = findViewById(R.id.frame_layout);
-        View view = LayoutInflater.from(this).inflate(R.layout.item_linear_layoutl, frameLayout);
+        //将内部的布局item_linear_layout，放入AnimationFrameLayout中
+        View view = LayoutInflater.from(this).inflate(R.layout.item_linear_layout, frameLayout);
         ImageView imageView = view.findViewById(R.id.image);
         String url = getIntent().getStringExtra("url");
         Glide.with(this).load(url).into(imageView);

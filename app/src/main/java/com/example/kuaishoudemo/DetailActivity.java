@@ -9,23 +9,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 
-import java.util.List;
-
 /**
  * Created by Harry on 2019/4/15.
- * desc:
+ * desc:普通的实现方式，易于集成的方式请看{@link DetailActivity2}中的实现方式{@link AnimationFrameLayout},基本的实现注释也是在{@link AnimationFrameLayout}
  */
 public class DetailActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
     private GestureDetector mGestureDetector;
-    private float mTouchSlop;
     LinearLayout parent;
     private float mExitScalingRef; // 触摸退出进度
     private int viewHeight;
@@ -44,7 +40,6 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
             return Color.argb(alpha, red, green, blue);
         }
     };
-    private List<String> datas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +57,6 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
         String url = getIntent().getStringExtra("url");
         Glide.with(this).load(url).into(imageView);
         mGestureDetector = new GestureDetector(this, this);
-        mTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
     }
 
 
@@ -116,7 +110,9 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        viewHeight = parent.getHeight();
+        if (viewHeight == 0) {
+            viewHeight = parent.getHeight();
+        }
         float moveX = e2.getX() - e1.getX();
         float moveY = e2.getY() - e1.getY();
 

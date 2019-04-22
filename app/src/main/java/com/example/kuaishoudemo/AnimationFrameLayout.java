@@ -5,7 +5,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,14 +12,18 @@ import android.widget.FrameLayout;
 
 /**
  * Created by Harry on 2019/4/19.
- * desc:
+ * desc:父控件的拉动滑动动画，更易于集成
  */
 public class AnimationFrameLayout extends FrameLayout implements GestureDetector.OnGestureListener {
+    //当前自定义FrameLayout
     private FrameLayout frameLayout;
+    //FrameLayout的第一个子view
     private View parent;
     private GestureDetector mGestureDetector;
     private float mExitScalingRef; // 触摸退出进度
+    //子view的高度
     private int viewHeight;
+    //结束的监听器
     private FinishListener finishListener;
     TypeEvaluator<Integer> mColorEvaluator = new TypeEvaluator<Integer>() {
         @Override
@@ -64,9 +67,9 @@ public class AnimationFrameLayout extends FrameLayout implements GestureDetector
                 //缩小到一定的程度，将其关闭
                 if (finishListener != null) {
                     finishListener.finish();
-
                 }
             } else {
+                //如果拉动距离不到某个角度，则将其动画返回原位置
                 final float moveX = parent.getTranslationX();
                 final float moveY = parent.getTranslationY();
                 final float scaleX = parent.getScaleX();
@@ -108,7 +111,6 @@ public class AnimationFrameLayout extends FrameLayout implements GestureDetector
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        Log.i("ddd333", "dddd333");
         if (parent == null) {
             parent = getChildAt(0);
         }
@@ -119,21 +121,18 @@ public class AnimationFrameLayout extends FrameLayout implements GestureDetector
         float moveY = e2.getY() - e1.getY();
 
         mExitScalingRef = 1;
-        if (moveY > 0) {
-            mExitScalingRef = mExitScalingRef - moveY / viewHeight;
-        } else {
-            mExitScalingRef = mExitScalingRef + (-moveY) / viewHeight;
-        }
+        mExitScalingRef = mExitScalingRef - moveY / viewHeight;
         parent.setTranslationX(moveX);
         parent.setTranslationY(moveY);
         parent.setScaleX(mExitScalingRef);
         parent.setScaleY(mExitScalingRef);
         if (mExitScalingRef > 1) {
+            //当用户往上滑动的时候
             frameLayout.setBackgroundColor(mColorEvaluator.evaluate(2 - mExitScalingRef, 0x00000000, 0xFF000000));
         } else {
+            //当用户往下滑动的时候
             frameLayout.setBackgroundColor(mColorEvaluator.evaluate(mExitScalingRef, 0x00000000, 0xFF000000));
         }
-
         return false;
     }
 

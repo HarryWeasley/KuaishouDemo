@@ -20,7 +20,8 @@ import com.bumptech.glide.Glide;
  * desc:普通的实现方式，易于集成的方式请看{@link DetailActivity2}中的实现方式{@link AnimationFrameLayout},基本的实现注释也是在{@link AnimationFrameLayout}
  */
 public class DetailActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
-
+    //退出进度
+    private float DEFAULT_EXIT_SCALE = 0.5f;
     private GestureDetector mGestureDetector;
     LinearLayout parent;
     private float mExitScalingRef; // 触摸退出进度
@@ -63,7 +64,7 @@ public class DetailActivity extends AppCompatActivity implements GestureDetector
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (mExitScalingRef < 0.5) {
+            if (mExitScalingRef < DEFAULT_EXIT_SCALE) {
                 //缩小到一定的程度，将其关闭
                 onBackPressed();
             } else {

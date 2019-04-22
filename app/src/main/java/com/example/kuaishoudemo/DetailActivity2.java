@@ -29,6 +29,7 @@ public class DetailActivity2 extends AppCompatActivity {
         AnimationFrameLayout frameLayout = findViewById(R.id.frame_layout);
         //将内部的布局item_linear_layout，放入AnimationFrameLayout中
         View view = LayoutInflater.from(this).inflate(R.layout.item_linear_layout, frameLayout);
+        frameLayout.setDefaultExitScale(0.8f);
         ImageView imageView = view.findViewById(R.id.image);
         String url = getIntent().getStringExtra("url");
         Glide.with(this).load(url).into(imageView);

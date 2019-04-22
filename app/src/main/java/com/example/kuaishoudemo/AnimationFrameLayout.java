@@ -15,16 +15,24 @@ import android.widget.FrameLayout;
  * desc:父控件的拉动滑动动画，更易于集成
  */
 public class AnimationFrameLayout extends FrameLayout implements GestureDetector.OnGestureListener {
+    //退出进度
+    private float DEFAULT_EXIT_SCALE = 0.5f;
     //当前自定义FrameLayout
     private FrameLayout frameLayout;
     //FrameLayout的第一个子view
     private View parent;
     private GestureDetector mGestureDetector;
-    private float mExitScalingRef; // 触摸退出进度
+    //触摸退出进度
+    private float mExitScalingRef;
     //子view的高度
     private int viewHeight;
     //结束的监听器
     private FinishListener finishListener;
+
+    public void setDefaultExitScale(float defaultExitScale) {
+        DEFAULT_EXIT_SCALE = defaultExitScale;
+    }
+
     TypeEvaluator<Integer> mColorEvaluator = new TypeEvaluator<Integer>() {
         @Override
         public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
@@ -54,16 +62,9 @@ public class AnimationFrameLayout extends FrameLayout implements GestureDetector
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        boolean ret = super.dispatchTouchEvent(event);
-        return ret;
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (mExitScalingRef < 0.5) {
+            if (mExitScalingRef < DEFAULT_EXIT_SCALE) {
                 //缩小到一定的程度，将其关闭
                 if (finishListener != null) {
                     finishListener.finish();
